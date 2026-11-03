@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +27,18 @@ public class Pedido {
 	
 	@Column(name = "id_cliente")
 	private long idCliente;
-	private LocalDateTime FECHA;
+	
+	private LocalDateTime fecha;
 	private double total;
 	private String metodo;
 	private String notas;
+	
+	
+	@ManyToOne
+	// En name ponemos el nombre de la FK en base de datos. En referencedColumnName 
+	// ponemos el nombre en base de datos a la que hacer referencia
+	@JoinColumn(name = "id_cliente",referencedColumnName = "id", insertable = false,updatable = false)
+	// El nombre de este atributo es lo que ponemos en el mappedBy
+	private Cliente cliente;
 
 }
