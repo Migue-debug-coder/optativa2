@@ -28,8 +28,10 @@ public class PizzaService {
 	}
 
 	public Pizza create(Pizza pizza) {
+		if(pizza.getDisponible() == null) {
+			pizza.setDisponible(true);
+		}
 		pizza.setId(0L);
-		pizza.setDisponible(true);
 		return this.pizzaRepository.save(pizza);
 	}
 
@@ -40,7 +42,7 @@ public class PizzaService {
 		pizzaBD.setPrecio(pizza.getPrecio());
 		pizzaBD.setVegetariana(pizza.isVegetariana());
 		pizzaBD.setVegana(pizza.isVegana());
-		pizzaBD.setDisponible(pizza.isDisponible());
+		pizzaBD.setDisponible(pizza.getDisponible());
 		return this.pizzaRepository.save(pizzaBD);
 	}
 
