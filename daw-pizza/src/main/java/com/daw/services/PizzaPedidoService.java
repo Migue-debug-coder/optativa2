@@ -34,8 +34,6 @@ public class PizzaPedidoService {
 
 	public PizzaPedido update(long idPizzaPedido, PizzaPedido pizzaPedido) {
 		PizzaPedido pizzaPedidoBD = this.findById(idPizzaPedido);
-		pizzaPedidoBD.setIdPedido(pizzaPedido.getIdPedido());
-		pizzaPedidoBD.setIdPizza(pizzaPedido.getIdPizza());
 		pizzaPedidoBD.setCantidad(pizzaPedido.getCantidad());
 		pizzaPedidoBD.setPrecio(pizzaPedido.getPrecio());
 		return this.pizzaPedidoRepository.save(pizzaPedidoBD);

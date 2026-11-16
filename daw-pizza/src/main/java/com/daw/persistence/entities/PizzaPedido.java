@@ -2,6 +2,7 @@ package com.daw.persistence.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,24 +20,20 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PizzaPedido {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
-	@Column(name="id_pedido")
-	private long idPedido;
-	
-	@Column(name="id_pizza")
-	private long idPizza;
-	
-	private double cantidad;
-	
-	private double precio;
-	
-	@ManyToOne
-	@JoinColumn(name = "id_pedido",referencedColumnName = "id", insertable = false,updatable = false)
-	private Pedido pedido;
-	
-	@ManyToOne
-	@JoinColumn(name = "id_pizza",referencedColumnName = "id", insertable = false,updatable = false)
-	private Pizza pizza;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, columnDefinition = "DECIMAL(2,1)")
+    private Double cantidad;
+	    
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,2)")
+    private Double precio;
+	    
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pedido_id", nullable = false)
+    private Pedido pedido;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pizza_id", nullable = false)
+    private Pizza pizza;
 }

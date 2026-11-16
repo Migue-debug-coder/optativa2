@@ -1,39 +1,46 @@
 package com.daw.persistence.entities;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "pizza")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Pizza {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
+	private Long id;
+
+	@Column(nullable = false, length = 30)
 	private String nombre;
+	
+	@Column(nullable = false, length = 150)
 	private String descripcion;
-	private double precio;
-	private boolean vegetariana;
-	private boolean vegana;
-	private Boolean disponible;
-	
-	@OneToMany(mappedBy = "pizza")
-	@JsonIgnore
-	private List<PizzaPedido> pizzaPedidos;
-	
+
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,2)")
+    private Double precio;
+    
+    @Column(nullable = false)
+    private Boolean vegetariana;
+    
+    @Column(nullable = false)
+    private Boolean vegana;
+    
+    @Column(nullable = false)
+    private Boolean disponible;
+    
+	public Pizza() {
+		super();
+		this.disponible = true;
+		this.vegana = false;
+		this.vegetariana = false;
+	}
 }

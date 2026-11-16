@@ -5,5 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.daw.persistence.entities.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long>{
+	 boolean existsByEmail(String email);
 
+	 boolean existsByTelefono(String telefono);
 }

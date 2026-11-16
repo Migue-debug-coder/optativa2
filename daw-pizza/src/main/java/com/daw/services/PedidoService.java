@@ -37,7 +37,6 @@ public class PedidoService {
 
 	public Pedido update(long idPedido, Pedido pedido) {
 		Pedido pedidoBD = this.findById(idPedido);
-		pedidoBD.setIdCliente(pedido.getIdCliente());
 		pedidoBD.setFecha(pedido.getFecha());
 		pedidoBD.setTotal(pedido.getTotal());
 		pedidoBD.setMetodo(pedido.getMetodo());
