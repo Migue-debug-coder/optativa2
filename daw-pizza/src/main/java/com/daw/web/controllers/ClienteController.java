@@ -23,16 +23,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/clientes")
 @RequiredArgsConstructor
 public class ClienteController {
+
 	private final ClienteService clienteService;
 
 	@GetMapping
-	public List<Cliente> list() {
-		return this.clienteService.findAll();
+	public ResponseEntity<List<Cliente>> list() {
+		return ResponseEntity.ok(this.clienteService.findAll());
 	}
 
 	@GetMapping("/{idCliente}")
-	public ResponseEntity<?> findById(@PathVariable long id) {
-		return ResponseEntity.ok(this.clienteService.findById(id));
+	public ResponseEntity<Cliente> findById(@PathVariable long idCliente) {
+		return ResponseEntity.ok(this.clienteService.findById(idCliente));
 	}
 
 	@PostMapping
@@ -41,12 +42,12 @@ public class ClienteController {
 	}
 
 	@PutMapping("/{idCliente}")
-	public ResponseEntity<Cliente> update(@PathVariable long idCliente, @RequestBody Cliente cliente) {
-		return ResponseEntity.ok(clienteService.update(idCliente, cliente));
+	public ResponseEntity<?> update(@PathVariable int idCliente, @Valid @RequestBody Cliente cliente) {
+		return ResponseEntity.ok(this.clienteService.update(idCliente, cliente));
 	}
 
 	@DeleteMapping("/{idCliente}")
-	public ResponseEntity<?> delete(@PathVariable long idCliente) {
+	public ResponseEntity<?> delete(@PathVariable int idCliente) {
 		this.clienteService.deleteById(idCliente);
 		return ResponseEntity.ok().build();
 	}

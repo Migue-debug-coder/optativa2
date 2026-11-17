@@ -8,8 +8,9 @@ import org.springframework.validation.annotation.Validated;
 
 import com.daw.persistence.entities.Pedido;
 import com.daw.persistence.repositories.PedidoRepository;
-import com.daw.services.exceptions.PedidoException;
+import com.daw.services.exceptions.ResourceNotFoundException;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,36 +18,51 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class PedidoService {
 
-	private final PedidoRepository pedidoRepository;
-
-	public List<Pedido> findAll() {
+private final PedidoRepository pedidoRepository;
+	
+	public List<Pedido> findAll(){
 		return this.pedidoRepository.findAll();
 	}
-
+	
 	public Pedido findById(long idPedido) {
 		if (!this.pedidoRepository.existsById(idPedido)) {
-			throw new PedidoException(String.format("El Pedido con id %d no existe", idPedido));
+			throw new ResourceNotFoundException("Pedido no encontrado con ID: " + idPedido);
 		}
+
 		return this.pedidoRepository.findById(idPedido).get();
 	}
-
-	public Pedido create(Pedido pedido) {
+	
+	public Pedido create(@Valid Pedido pedido) {
+//		ClienteEntity cliente = this.clienteRepository.findById(pedido.getCliente().getId())
+//				.orElseThrow(() -> new ResourceNotFoundException("No se puede crear el pedido. Cliente no encontrado con ID: " + pedido.getCliente().getId()));
+		
 		pedido.setId(0L);
 		pedido.setFecha(LocalDateTime.now());
 		pedido.setTotal(0.0);
+//		pedido.setCliente(cliente);
+		
 		return this.pedidoRepository.save(pedido);
 	}
 
-	public Pedido update(long idPedido, Pedido pedido) {
+	public Pedido update(long idPedido, @Valid Pedido pedido) {
 		Pedido pedidoBD = this.findById(idPedido);
-		pedidoBD.setFecha(pedido.getFecha());
-		pedidoBD.setTotal(pedido.getTotal());
+		
+//		ClienteEntity cliente = this.clienteRepository.findById(pedido.getCliente().getId())
+//				.orElseThrow(() -> new ResourceNotFoundException("No se puede crear el pedido. Cliente no encontrado con ID: " + pedido.getCliente().getId()));
+		
+		
 		pedidoBD.setMetodo(pedido.getMetodo());
 		pedidoBD.setNotas(pedido.getNotas());
+//        pedido.setCliente(cliente);
+
 		return this.pedidoRepository.save(pedidoBD);
 	}
 
 	public void deleteById(long idPedido) {
-		this.pedidoRepository.delete(this.findById(idPedido));
+		if (!this.pedidoRepository.existsById(idPedido)) {
+			throw new ResourceNotFoundException("No se puede eliminar. Pedido no encontrado con ID: " + idPedido);
+		}
+
+		this.pedidoRepository.deleteById(idPedido);
 	}
 }

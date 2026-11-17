@@ -1,46 +1,74 @@
 package com.daw.services;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.daw.persistence.entities.Cliente;
 import com.daw.persistence.repositories.ClienteRepository;
-import com.daw.services.exceptions.ClienteException;
+import com.daw.services.exceptions.BusinessRuleException;
+import com.daw.services.exceptions.ResourceNotFoundException;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Validated
 public class ClienteService {
-	private final ClienteRepository clienteRepository;
-
-	public List<Cliente> findAll() {
-		return clienteRepository.findAll();
+private final ClienteRepository clienteRepository;
+	
+	public List<Cliente> findAll(){
+		return this.clienteRepository.findAll();
 	}
-
-	public Cliente findById(long id) {
-		if (!clienteRepository.existsById(id)) {
-			throw new ClienteException(String.format("El cliente con id %d no existe", id));
+	
+	public Cliente findById(long idCliente) {
+		if (!this.clienteRepository.existsById(idCliente)) {
+			throw new ResourceNotFoundException("Cliente no encontrado con ID: " + idCliente);
 		}
-		return clienteRepository.findById(id).get();
-	}
 
-	public Cliente create(Cliente cliente) {
-		cliente.setId(0L);
-		return clienteRepository.save(cliente);
+		return this.clienteRepository.findById(idCliente).get();
 	}
+	
+	public Cliente create(@Valid Cliente cliente) {
+		cliente.setId(null);
+		
+		if(this.clienteRepository.existsByEmail(cliente.getEmail())) {
+			throw new BusinessRuleException("Ya existe un cliente registrado con el email: " + cliente.getEmail());
+		}
+		if(this.clienteRepository.existsByTelefono(cliente.getTelefono())) {
+            throw new BusinessRuleException("Ya existe un cliente registrado con el teléfono: " + cliente.getTelefono());
+        }
 
-	public Cliente update(long id, Cliente cliente) {
-		Cliente clienteBD = findById(id);
+		return this.clienteRepository.save(cliente);
+	}
+	
+	public Cliente update(int idCliente, @Valid Cliente cliente) {
+		Cliente clienteBD = this.findById(idCliente);
+		
+        // Validar email único si cambió
+        if (!cliente.getEmail().equalsIgnoreCase(clienteBD.getEmail()) && clienteRepository.existsByEmail(cliente.getEmail())) {
+            throw new BusinessRuleException("Ya existe otro cliente con el email: " + cliente.getEmail());
+        }
+        // Validar teléfono único si cambió
+        if (!cliente.getTelefono().equals(clienteBD.getTelefono()) && clienteRepository.existsByTelefono(cliente.getTelefono())) {
+            throw new BusinessRuleException("Ya existe otro cliente con el teléfono: " + cliente.getTelefono());
+        }
+		
 		clienteBD.setNombre(cliente.getNombre());
 		clienteBD.setDireccion(cliente.getDireccion());
 		clienteBD.setEmail(cliente.getEmail());
 		clienteBD.setTelefono(cliente.getTelefono());
-		return clienteRepository.save(clienteBD);
-	}
 
-	public void deleteById(long id) {
-		this.clienteRepository.delete(findById(id));
+		return this.clienteRepository.save(clienteBD);
+	}
+	
+	public void deleteById(long idCliente) {
+		if (!this.clienteRepository.existsById(idCliente)) {
+			throw new ResourceNotFoundException("No se puede eliminar. Cliente no encontrado con ID: " + idCliente);
+		}
+
+		this.clienteRepository.deleteById(idCliente);
 	}
 }

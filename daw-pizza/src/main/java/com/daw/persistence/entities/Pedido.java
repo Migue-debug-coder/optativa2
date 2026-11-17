@@ -19,7 +19,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,8 +42,7 @@ public class Pedido {
 	@Enumerated(EnumType.STRING)
 	private Metodo metodo;
 	
-	@NotBlank(message = "Las notas no pueden estar vacío")
-	@Size(max = 200,message = "Las notas no puede superar los 200 carcateres")
+	@Size(max = 200,message = "Las notas no pueden superar los 200 carcateres")
     @Column(length = 200)
     private String notas;
 	

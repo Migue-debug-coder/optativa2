@@ -16,17 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.daw.persistence.entities.Pizza;
 import com.daw.services.PizzaService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/pizzas")
 @RequiredArgsConstructor
 public class PizzaController {
+
 	private final PizzaService pizzaService;
 
 	@GetMapping
-	public List<Pizza> list() {
-		return this.pizzaService.findAll();
+	public ResponseEntity<List<Pizza>> list() {
+		return ResponseEntity.ok(this.pizzaService.findAll());
 	}
 
 	@GetMapping("/{idPizza}")
@@ -35,12 +37,12 @@ public class PizzaController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Pizza pizza) {
+	public ResponseEntity<?> create(@Valid @RequestBody Pizza pizza) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.pizzaService.create(pizza));
 	}
 
 	@PutMapping("/{idPizza}")
-	public ResponseEntity<Pizza> update(@PathVariable long idPizza, @RequestBody Pizza pizza) {
+	public ResponseEntity<?> update(@PathVariable long idPizza, @Valid @RequestBody Pizza pizza) {
 		return ResponseEntity.ok(this.pizzaService.update(idPizza, pizza));
 	}
 

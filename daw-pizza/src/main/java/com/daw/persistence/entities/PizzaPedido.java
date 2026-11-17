@@ -1,5 +1,7 @@
 package com.daw.persistence.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,6 +35,7 @@ public class PizzaPedido {
     @Column(nullable = false, columnDefinition = "DECIMAL(5,2)")
     private Double precio;
 	    
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;

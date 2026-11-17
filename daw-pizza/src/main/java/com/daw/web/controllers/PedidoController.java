@@ -16,17 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.daw.persistence.entities.Pedido;
 import com.daw.services.PedidoService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/pedidos")
 @RequiredArgsConstructor
 public class PedidoController {
+
 	private final PedidoService pedidoService;
 
 	@GetMapping
-	public List<Pedido> list() {
-		return this.pedidoService.findAll();
+	public ResponseEntity<List<Pedido>> list() {
+		return ResponseEntity.ok(this.pedidoService.findAll());
 	}
 
 	@GetMapping("/{idPedido}")
@@ -35,13 +37,13 @@ public class PedidoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Pedido pedido) {
+	public ResponseEntity<?> create(@Valid @RequestBody Pedido pedido) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.pedidoService.create(pedido));
 	}
 
 	@PutMapping("/{idPedido}")
-	public ResponseEntity<Pedido> update(@PathVariable long idPedido, @RequestBody Pedido pedido) {
-		return ResponseEntity.ok(pedidoService.update(idPedido, pedido));
+	public ResponseEntity<?> update(@PathVariable long idPedido, @Valid @RequestBody Pedido pedido) {
+		return ResponseEntity.ok(this.pedidoService.update(idPedido, pedido));
 	}
 
 	@DeleteMapping("/{idPedido}")
@@ -49,4 +51,5 @@ public class PedidoController {
 		this.pedidoService.deleteById(idPedido);
 		return ResponseEntity.ok().build();
 	}
+
 }

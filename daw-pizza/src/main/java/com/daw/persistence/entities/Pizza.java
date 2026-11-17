@@ -28,12 +28,12 @@ public class Pizza {
 	@Column(nullable = false, length = 30)
 	private String nombre;
 	
-	@Size(max = 150,message = "El nombre no puede superar los 30 carcateres")
+	@Size(max = 150,message = "La descripción no puede superar los 30 carcateres")
 	@Column(length = 150)
 	private String descripcion;
 
 	@NotNull(message = "El precio es obligatorio")
-	@DecimalMin(value = "3.90",inclusive = true, message = "El precio debe ser superior a 0")
+	@DecimalMin(value = "3.90",inclusive = true, message = "El precio debe ser superior a 3.90")
     @Column(nullable = false, columnDefinition = "DECIMAL(5,2)")
     private Double precio;
     

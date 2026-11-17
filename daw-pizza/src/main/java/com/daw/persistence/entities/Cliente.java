@@ -29,7 +29,7 @@ public class Cliente {
 	@Column(nullable = false, length = 30)
 	private String nombre;
 	
-	@NotBlank(message = "La dirección no puede estar vacío")
+	@NotBlank(message = "La dirección no puede estar vacía")
 	@Size(max = 100,message = "La dirección no puede superar los 100 carcateres")
 	@Column(nullable = false, length = 100)
 	private String direccion;
@@ -40,7 +40,7 @@ public class Cliente {
 	@Column(nullable = false, length = 50, unique = true)
 	private String email;
 
-	@NotBlank(message = "El teléfono del cliente no puede estar vacío")
+	@NotBlank(message = "El teléfono no puede estar vacío")
 	@Size(max = 20,message = "El teléfono no puede superar los 20 carcateres")
 	@Column(nullable = false, length = 20, unique = true)
 	private String telefono;
