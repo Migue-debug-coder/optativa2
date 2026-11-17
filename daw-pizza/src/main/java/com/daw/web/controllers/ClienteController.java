@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.daw.persistence.entities.Cliente;
 import com.daw.services.ClienteService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,7 +36,7 @@ public class ClienteController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Cliente cliente) {
+	public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.clienteService.create(cliente));
 	}
 

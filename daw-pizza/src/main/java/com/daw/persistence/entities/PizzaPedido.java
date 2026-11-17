@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +25,8 @@ public class PizzaPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@NotNull(message = "La cantidad es obligatoria")
+	@DecimalMin(value = "0.5",inclusive = true, message = "La cantidad debe ser superior a 0.5")
     @Column(nullable = false, columnDefinition = "DECIMAL(2,1)")
     private Double cantidad;
 	    

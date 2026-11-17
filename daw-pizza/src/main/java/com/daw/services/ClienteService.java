@@ -2,6 +2,8 @@ package com.daw.services;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
 import com.daw.persistence.entities.Cliente;
 import com.daw.persistence.repositories.ClienteRepository;
 import com.daw.services.exceptions.ClienteException;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class ClienteService {
 	private final ClienteRepository clienteRepository;
 

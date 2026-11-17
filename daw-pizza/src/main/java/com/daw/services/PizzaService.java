@@ -3,6 +3,7 @@ package com.daw.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.daw.persistence.entities.Pizza;
 import com.daw.persistence.repositories.PizzaRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class PizzaService {
 
 	private final PizzaRepository pizzaRepository;
