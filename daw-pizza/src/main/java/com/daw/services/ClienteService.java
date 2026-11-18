@@ -7,8 +7,10 @@ import org.springframework.validation.annotation.Validated;
 
 import com.daw.persistence.entities.Cliente;
 import com.daw.persistence.repositories.ClienteRepository;
+import com.daw.services.dtos.ClienteDTO;
 import com.daw.services.exceptions.BusinessRuleException;
 import com.daw.services.exceptions.ResourceNotFoundException;
+import com.daw.services.mappers.ClienteMapper;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +19,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated
 public class ClienteService {
-private final ClienteRepository clienteRepository;
 	
-	public List<Cliente> findAll(){
-		return this.clienteRepository.findAll();
+	private final ClienteRepository clienteRepository;
+	private final ClienteMapper clienteMapper;
+	
+	public List<ClienteDTO> findAll(){
+		return this.clienteMapper.toDtos(this.clienteRepository.findAll());
 	}
 	
 	public Cliente findById(long idCliente) {
@@ -31,17 +35,20 @@ private final ClienteRepository clienteRepository;
 		return this.clienteRepository.findById(idCliente).get();
 	}
 	
-	public Cliente create(@Valid Cliente cliente) {
-		cliente.setId(null);
+	public ClienteDTO create(@Valid ClienteDTO dto) {
 		
-		if(this.clienteRepository.existsByEmail(cliente.getEmail())) {
-			throw new BusinessRuleException("Ya existe un cliente registrado con el email: " + cliente.getEmail());
+		Cliente entity = this.clienteMapper.toEntity(dto);
+		
+		entity.setId(null);
+		
+		if(this.clienteRepository.existsByEmail(entity.getEmail())) {
+			throw new BusinessRuleException("Ya existe un cliente registrado con el email: " + entity.getEmail());
 		}
-		if(this.clienteRepository.existsByTelefono(cliente.getTelefono())) {
-            throw new BusinessRuleException("Ya existe un cliente registrado con el teléfono: " + cliente.getTelefono());
+		if(this.clienteRepository.existsByTelefono(entity.getTelefono())) {
+            throw new BusinessRuleException("Ya existe un cliente registrado con el teléfono: " + entity.getTelefono());
         }
-
-		return this.clienteRepository.save(cliente);
+				
+		return this.clienteMapper.toDto(this.clienteRepository.save(entity));
 	}
 	
 	public Cliente update(int idCliente, @Valid Cliente cliente) {
