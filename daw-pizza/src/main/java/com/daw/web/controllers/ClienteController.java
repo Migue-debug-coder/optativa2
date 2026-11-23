@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.daw.persistence.entities.Cliente;
 import com.daw.services.ClienteService;
+import com.daw.services.dtos.ClienteDTO;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class ClienteController {
 	private final ClienteService clienteService;
 
 	@GetMapping
-	public ResponseEntity<List<Cliente>> list() {
+	public ResponseEntity<List<ClienteDTO>> list() {
 		return ResponseEntity.ok(this.clienteService.findAll());
 	}
 
@@ -37,7 +38,7 @@ public class ClienteController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente) {
+	public ResponseEntity<?> create(@Valid @RequestBody ClienteDTO cliente) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(this.clienteService.create(cliente));
 	}
 
