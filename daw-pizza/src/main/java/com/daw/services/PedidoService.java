@@ -8,7 +8,10 @@ import org.springframework.validation.annotation.Validated;
 
 import com.daw.persistence.entities.Pedido;
 import com.daw.persistence.repositories.PedidoRepository;
+import com.daw.services.dtos.PedidoInputDTO;
+import com.daw.services.dtos.PedidoOutputDTO;
 import com.daw.services.exceptions.ResourceNotFoundException;
+import com.daw.services.mappers.PedidoMapper;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class PedidoService {
 
 private final PedidoRepository pedidoRepository;
+private final PedidoMapper pedidoMapper;
 	
 	public List<Pedido> findAll(){
 		return this.pedidoRepository.findAll();
@@ -32,16 +36,17 @@ private final PedidoRepository pedidoRepository;
 		return this.pedidoRepository.findById(idPedido).get();
 	}
 	
-	public Pedido create(@Valid Pedido pedido) {
+	public PedidoOutputDTO create(@Valid PedidoInputDTO inputDto) {
 //		ClienteEntity cliente = this.clienteRepository.findById(pedido.getCliente().getId())
 //				.orElseThrow(() -> new ResourceNotFoundException("No se puede crear el pedido. Cliente no encontrado con ID: " + pedido.getCliente().getId()));
 		
+		Pedido pedido = this.pedidoMapper.toEntity(inputDto);
 		pedido.setId(0L);
 		pedido.setFecha(LocalDateTime.now());
 		pedido.setTotal(0.0);
 //		pedido.setCliente(cliente);
-		
-		return this.pedidoRepository.save(pedido);
+				
+		return this.pedidoMapper.toDto(this.pedidoRepository.save(pedido));
 	}
 
 	public Pedido update(long idPedido, @Valid Pedido pedido) {
