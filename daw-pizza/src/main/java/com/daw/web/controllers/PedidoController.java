@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.daw.persistence.entities.Pedido;
 import com.daw.services.PedidoService;
+import com.daw.services.dtos.PedidoInputDTO;
+import com.daw.services.dtos.PedidoOutputDTO;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class PedidoController {
 	private final PedidoService pedidoService;
 
 	@GetMapping
-	public ResponseEntity<List<Pedido>> list() {
+	public ResponseEntity<List<PedidoOutputDTO>> list() {
 		return ResponseEntity.ok(this.pedidoService.findAll());
 	}
 
@@ -37,13 +38,13 @@ public class PedidoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@Valid @RequestBody Pedido pedido) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(this.pedidoService.create(pedido));
+	public ResponseEntity<?> create(@Valid @RequestBody PedidoInputDTO inputDTO) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(this.pedidoService.create(inputDTO));
 	}
 
 	@PutMapping("/{idPedido}")
-	public ResponseEntity<?> update(@PathVariable long idPedido, @Valid @RequestBody Pedido pedido) {
-		return ResponseEntity.ok(this.pedidoService.update(idPedido, pedido));
+	public ResponseEntity<?> update(@PathVariable long idPedido, @Valid @RequestBody PedidoInputDTO inputDTO) {
+		return ResponseEntity.ok(this.pedidoService.update(idPedido, inputDTO));
 	}
 
 	@DeleteMapping("/{idPedido}")

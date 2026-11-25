@@ -6,59 +6,70 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.daw.persistence.entities.Cliente;
 import com.daw.persistence.entities.Pedido;
+import com.daw.persistence.repositories.ClienteRepository;
 import com.daw.persistence.repositories.PedidoRepository;
 import com.daw.services.dtos.PedidoInputDTO;
 import com.daw.services.dtos.PedidoOutputDTO;
 import com.daw.services.exceptions.ResourceNotFoundException;
 import com.daw.services.mappers.PedidoMapper;
 
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 @Validated
+@Transactional
 public class PedidoService {
 
 private final PedidoRepository pedidoRepository;
 private final PedidoMapper pedidoMapper;
+private final ClienteRepository clienteRepository;
 	
-	public List<Pedido> findAll(){
-		return this.pedidoRepository.findAll();
+	@Transactional(readOnly = true)
+	public List<PedidoOutputDTO> findAll(){
+		return this.pedidoMapper.toDtos(pedidoRepository.findAll());
 	}
 	
-	public Pedido findById(long idPedido) {
+	@Transactional(readOnly = true)
+	public PedidoOutputDTO findById(long idPedido) {
 		if (!this.pedidoRepository.existsById(idPedido)) {
 			throw new ResourceNotFoundException("Pedido no encontrado con ID: " + idPedido);
 		}
 
-		return this.pedidoRepository.findById(idPedido).get();
+		return this.pedidoMapper.toDto(pedidoRepository.findById(idPedido).get());
 	}
 	
 	public PedidoOutputDTO create(@Valid PedidoInputDTO inputDto) {
-//		ClienteEntity cliente = this.clienteRepository.findById(pedido.getCliente().getId())
-//				.orElseThrow(() -> new ResourceNotFoundException("No se puede crear el pedido. Cliente no encontrado con ID: " + pedido.getCliente().getId()));
+		// En el inputDTO recibo el id cliente método y notas
+		Cliente cliente = this.clienteRepository.findById(inputDto.getClienteId())
+		.orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con ID: "+inputDto.getClienteId()));
 		
-		Pedido pedido = this.pedidoMapper.toEntity(inputDto);
-		pedido.setId(0L);
+		Pedido pedido = new Pedido();
+		pedido.setId(null);
 		pedido.setFecha(LocalDateTime.now());
 		pedido.setTotal(0.0);
-//		pedido.setCliente(cliente);
+		pedido.setMetodo(inputDto.getMetodo());
+		pedido.setNotas(inputDto.getNotas());
+		pedido.setCliente(cliente);
 				
 		return this.pedidoMapper.toDto(this.pedidoRepository.save(pedido));
 	}
 
-	public Pedido update(long idPedido, @Valid Pedido pedido) {
-		Pedido pedidoBD = this.findById(idPedido);
+	public Pedido update(long idPedido, @Valid PedidoInputDTO inputDto) {
+		Pedido pedidoBD = this.pedidoRepository.findById(idPedido)
+				.orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: "+ idPedido));
 		
-//		ClienteEntity cliente = this.clienteRepository.findById(pedido.getCliente().getId())
-//				.orElseThrow(() -> new ResourceNotFoundException("No se puede crear el pedido. Cliente no encontrado con ID: " + pedido.getCliente().getId()));
+		Cliente cliente = this.clienteRepository.findById(inputDto.getClienteId())
+				.orElseThrow(() -> new ResourceNotFoundException("No se puede crear el pedido. Cliente no encontrado con ID: " +inputDto.getClienteId()));
 		
 		
-		pedidoBD.setMetodo(pedido.getMetodo());
-		pedidoBD.setNotas(pedido.getNotas());
-//        pedido.setCliente(cliente);
+		pedidoBD.setMetodo(inputDto.getMetodo());
+		pedidoBD.setNotas(inputDto.getNotas());
+        pedidoBD.setCliente(cliente);
 
 		return this.pedidoRepository.save(pedidoBD);
 	}
